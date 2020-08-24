@@ -3,7 +3,7 @@ from rest_framework.generics import ListAPIView
 
 
 from .models import Department, Position, Employee
-from .serializers import DepartmentSerializer, PositionSerializer, EmployeeSerializer, ListSerializer
+from .serializers import DepartmentSerializer, ListSerializer, EmployeeSerializer, PositionSerializer
 
 class Tree(ListAPIView):
     queryset = Department.objects.filter(parent__isnull=True)
@@ -17,14 +17,6 @@ class DepartmentDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Department.objects.all()
     serializer_class = DepartmentSerializer
 
-class ListPosition(generics.ListCreateAPIView):
-    queryset = Position.objects.all()
-    serializer_class = PositionSerializer
-
-class PositionDetail(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Position.objects.all()
-    serializer_class = PositionSerializer
-
 class ListEmployee(generics.ListCreateAPIView):
     queryset = Employee.objects.all()
     serializer_class = EmployeeSerializer
@@ -32,3 +24,11 @@ class ListEmployee(generics.ListCreateAPIView):
 class EmployeeDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Employee.objects.all()
     serializer_class = EmployeeSerializer
+
+class ListPosition(generics.ListCreateAPIView):
+    queryset = Position.objects.all()
+    serializer_class = PositionSerializer
+
+class PositionDetail(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Position.objects.all()
+    serializer_class = PositionSerializer

@@ -1,4 +1,6 @@
 from django.db import models
+from django.core.exceptions import ValidationError
+from django.utils.translation import gettext_lazy as _
 
 class Department(models.Model):
     name = models.CharField(max_length=100)
@@ -8,23 +10,27 @@ class Department(models.Model):
     def __str__(self):
         return self.name
 
+def number_employee(value):
+    number_employeers = len(list(Position.objects.filter(employee=value)))
+    if number_employeers > 1 :
+        raise ValidationError(
+            _('%(value)s уже на двух должностях'),
+            params={'value': value}
+        )
+
 class Position(models.Model):
-    position = models.CharField(max_length=100)
+    name = models.CharField( max_length=100)
+    code = models.PositiveSmallIntegerField(default=0)
     stavka = models.PositiveIntegerField(default=0)
     department = models.ForeignKey('Department', on_delete=models.CASCADE, related_name='positions')
-
+    employee = models.ForeignKey('Employee', validators=[number_employee], null=True,  on_delete=models.SET_NULL, related_name='employee')
     def __str__(self):
-        return self.position
+        return f"{self.name} {self.employee}"
 
 
 class Employee(models.Model):
-    first_n = models.CharField(max_length=20)
-    middle_n = models.CharField(max_length=20, blank=True)
-    last_n = models.CharField(max_length=20)
-    code = models.PositiveSmallIntegerField(default=0)
+    name = models.CharField(max_length=100, unique=True, default='')
     foto = models.ImageField(upload_to="foto/", null=True, blank=True)
-    position_one = models.ForeignKey('Position', null=True, on_delete=models.SET_NULL, related_name="first")
-    position_two = models.ForeignKey('Position', null=True, blank=True, on_delete=models.SET_NULL, related_name="second")
 
     def __str__(self):
-        return f"{self.last_n} {self.first_n} {self.middle_n}"
+        return self.name
